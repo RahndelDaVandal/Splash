@@ -17,6 +17,12 @@ console = Console()
 name_path = pathlib.Path.cwd() / 'name'
 name_files = sorted(name_path.glob('*'))
 
+def splash_text() -> None:
+    path = pathlib.Path.cwd() / 'splash_text'
+    with path.open(mode='r') as file:
+        splash_str = file.read()
+    console.print(splash_str)
+
 def load_file(file_path:pathlib.Path) -> str:
     with file_path.open(mode='r') as file:
         file_to_str = file.read()
@@ -48,7 +54,7 @@ def _print(
     if len(style) == 0:
         console.print(text)
     else:
-        console.print(text, style=style)
+        console.print(Text.from_ansi(text), style=style)
 
 @app.command()
 def config(
@@ -64,15 +70,12 @@ def config(
     if create:
         console.print("WIP! config create selected", style='bold red')
 
-@app.callback(invoke_without_command=True)
+@app.callback(invoke_without_command=True, help=splash_text())
 def callback(
         color:str = typer.Option(None, '-c', help='user defined color'),
         random_color:bool = typer.Option(False, '-r', help='use random color'),
         blink:bool = typer.Option(False, '-b', help='make text blink'),
         ) -> None:
-    '''
-    Print ANSII Text Art in Shell.
-    '''
     file = rand_file(name_files)
     file_str = load_file(file)
     _print(file_str, color=color, blink=blink, random_color=random_color)
