@@ -2,7 +2,7 @@
 
 import time
 import typer
-import pathlib
+from pathlib import Path
 from random import randint
 from rich.console import Console
 from rich.text import Text
@@ -14,21 +14,21 @@ install()
 app = typer.Typer()
 console = Console()
 
-name_path = pathlib.Path.cwd() / 'name'
+name_path = Path.cwd() / 'name'
 name_files = sorted(name_path.glob('*'))
 
 def splash_text() -> None:
-    path = pathlib.Path.cwd() / 'splash_text'
+    path = Path.cwd() / 'splash_text'
     with path.open(mode='r') as file:
         splash_str = file.read()
     console.print(splash_str)
 
-def load_file(file_path:pathlib.Path) -> str:
+def load_file(file_path:Path) -> str:
     with file_path.open(mode='r') as file:
         file_to_str = file.read()
     return file_to_str
 
-def rand_file(file_list:list) -> pathlib.Path:
+def rand_file(file_list:list) -> Path:
     rand_num = randint(0, len(file_list) - 1)
     return file_list[rand_num]
 
@@ -58,7 +58,7 @@ def _print(
 
 @app.command()
 def config(
-        path:str,
+        path:Path,
         load:bool = typer.Option(False, '-l', help='load config file'),
         create:bool = typer.Option(False, '-c', help='create config file'),
         ) -> None:
@@ -70,7 +70,7 @@ def config(
     if create:
         console.print("WIP! config create selected", style='bold red')
 
-@app.callback(invoke_without_command=True, help=splash_text())
+@app.callback(invoke_without_command=True)
 def callback(
         color:str = typer.Option(None, '-c', help='user defined color'),
         random_color:bool = typer.Option(False, '-r', help='use random color'),
