@@ -1,6 +1,7 @@
 click==8.0.4
 colorama==0.4.4
 commonmark==0.9.1
+Pillow==9.0.1
 pyfiglet==0.8.post1
 Pygments==2.11.2
 rich==11.2.0
