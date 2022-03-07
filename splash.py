@@ -9,13 +9,20 @@ from rich.text import Text
 from rich.color import Color
 from rich.traceback import install
 
+from img_to_ascii import convert
+
 install()
 
-app = typer.Typer()
+app = typer.Typer(
+    context_settings={
+        'help_option_names': ['--help','-h'],
+    },
+)
 console = Console()
 
 name_path = Path.cwd() / 'name'
 name_files = sorted(name_path.glob('*'))
+
 
 def splash_text() -> None:
     path = Path.cwd() / 'splash_text'
@@ -35,6 +42,20 @@ def rand_file(file_list:list) -> Path:
 def rand_color() -> str:
     rand_num = randint(0,255)
     return Color.from_ansi(rand_num).name
+
+@app.command('print')
+def ascii_print() -> None:
+    """
+    print ascii art to terminal
+    """
+    pass    
+
+@app.command('convert')
+def convert_to_ascii() -> None:
+    """
+    convert to ascii art
+    """
+    pass
 
 def _print(
         text:str, 
@@ -61,7 +82,7 @@ def config(
         path:Path,
         load:bool = typer.Option(False, '-l', help='load config file'),
         create:bool = typer.Option(False, '-c', help='create config file'),
-        ) -> None:
+    ) -> None:
     '''
     Configure Application
     '''
@@ -70,15 +91,39 @@ def config(
     if create:
         console.print("WIP! config create selected", style='bold red')
 
-@app.callback(invoke_without_command=True)
-def callback(
+@app.command()
+def demo(
         color:str = typer.Option(None, '-c', help='user defined color'),
         random_color:bool = typer.Option(False, '-r', help='use random color'),
         blink:bool = typer.Option(False, '-b', help='make text blink'),
         ) -> None:
+    """
+    demo mode
+    """
     file = rand_file(name_files)
     file_str = load_file(file)
     _print(file_str, color=color, blink=blink, random_color=random_color)
 
+@app.callback()
+def callback() -> None:
+    """
+    \b
+        ______           __                   __
+       /      \         |  \                 |  \\
+      |  ▓▓▓▓▓▓\ ______ | ▓▓ ______   _______| ▓▓____
+      | ▓▓___\▓▓/      \| ▓▓|      \ /       \ ▓▓    \\
+       \▓▓    \|  ▓▓▓▓▓▓\ ▓▓ \▓▓▓▓▓▓\  ▓▓▓▓▓▓▓ ▓▓▓▓▓▓▓\\
+       _\▓▓▓▓▓▓\ ▓▓  | ▓▓ ▓▓/      ▓▓\▓▓    \| ▓▓  | ▓▓
+      |  \__| ▓▓ ▓▓__/ ▓▓ ▓▓  ▓▓▓▓▓▓▓_\▓▓▓▓▓▓\ ▓▓  | ▓▓
+       \▓▓    ▓▓ ▓▓    ▓▓ ▓▓\▓▓    ▓▓       ▓▓ ▓▓  | ▓▓
+        \▓▓▓▓▓▓| ▓▓▓▓▓▓▓ \▓▓ \▓▓▓▓▓▓▓\▓▓▓▓▓▓▓ \▓▓   \▓▓
+               | ▓▓
+               | ▓▓
+                \▓▓
+
+    """
+    pass
+
+    
 if __name__ == '__main__':
     app()
